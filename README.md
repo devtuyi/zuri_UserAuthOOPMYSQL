@@ -70,7 +70,7 @@ It has the following
       - `login($email, $password)`
         Takes in the email and passwords and logs the user in if credentials are correct, if so, set Session to `email ` and redirect the user to the dashboard else it redirects the user back to the login page
 
-      - `updateUser($username, $password)` Updates User Password (This will first called the checkEmailExist method). if useremailExist then update the password and redirect to the login page, else redirect to password reset page
+      - `updateUser($email, $password)` Updates User Password (This will first called the checkEmailExist method). if useremailExist then update the password and redirect to the login page, else redirect to password reset page
 
       - `deleteUser($email)` Deletes A User By the email.this method deletes the user with the given email from the button on the front-end (the button name is ‘email’ you can access it within the post array when the button is pressed
 

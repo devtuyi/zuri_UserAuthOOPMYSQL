@@ -10,14 +10,18 @@ class UserAuth extends Dbh{
 
     public function register($fullname, $email, $password, $confirmPassword, $country, $gender){
         $conn = $this->db->connect();
-        if($this->confirmPasswordMatch($password, $confirmPassword)){
-            $sql = "INSERT INTO students (`full_names`, `email`, `password`, `country`, `gender`) VALUES ('{$fullname}','{$email}', '{$password}', '{$country}', '{$gender}')";
-            if($conn->query($sql)){
-               echo "Ok";
-            } else {
-                echo "Opps". $conn->error;
+        if($this->checkEmailExist($email)) {
+            echo "Opps! Email already exists.";
+        } else {
+            if($this->confirmPasswordMatch($password, $confirmPassword)){
+                $sql = "INSERT INTO students (`full_names`, `email`, `password`, `country`, `gender`) VALUES ('{$fullname}','{$email}', '{$password}', '{$country}', '{$gender}')";
+                if($conn->query($sql)){
+                echo "Ok";
+                } else {
+                    echo "Opps". $conn->error;
+                }
             }
-        }      
+        }
     }
 
     public function login($email, $password){
@@ -101,9 +105,11 @@ class UserAuth extends Dbh{
 
     public function updateUser($email, $password){
         $conn = $this->db->connect();
-        $sql = "UPDATE students SET password = '{$password}' WHERE email = '{$email}'";
-        if($conn->query($sql) === TRUE){
-            header("Location: index.php?update=success");
+        if($this->checkEmailExist($email)) {
+            $sql = "UPDATE students SET password = '{$password}' WHERE email = '{$email}'";
+            if($conn->query($sql) === TRUE){
+                header("Location: index.php?update=success");
+            }
         } else {
             header("Location: forms/resetpassword.php?error=1");
         }
