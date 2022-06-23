@@ -2,7 +2,7 @@
 include_once 'Dbh.php';
 
 class UserAuth extends Dbh{
-    private static $db;
+    protected $db;
 
     public function __construct(){
         $this->db = new Dbh();
