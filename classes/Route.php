@@ -10,10 +10,6 @@ class formController extends UserAuth{
     protected string $country;
     protected int $id;
 
-    public function __construct(){
-        $this->db = new Dbh();
-    }
-
     public function handleForm(){
         switch(true) {
             case isset($_POST['register']):

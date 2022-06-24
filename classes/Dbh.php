@@ -1,10 +1,10 @@
 <?php
 session_start();
 class Dbh {
-    protected string $_hostname;
-    protected string $_username;
-    protected string $_password;
-    protected string $_database;
+    private string $_hostname;
+    private string $_username;
+    private string $_password;
+    private string $_database;
 
     public function __construct() {
         $this->_hostname = "localhost";
@@ -12,7 +12,7 @@ class Dbh {
         $this->_password = "";
         $this->_database = "zuriphp";
     }
-    public function connect() {
+    protected function connect() {
         $cnx = new mysqli($this->_hostname, $this->_username, $this->_password, $this->_database);
         if($cnx->connect_errno) {
             // Throw error
@@ -20,5 +20,9 @@ class Dbh {
         } else {
             return $cnx;
         }
+    }
+    protected function showError($url, $message = "") {
+        echo $message;
+        header("refresh:1; url=$url");
     }
 }

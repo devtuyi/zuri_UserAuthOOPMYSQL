@@ -2,7 +2,7 @@
 include_once 'Dbh.php';
 
 class UserAuth extends Dbh{
-    protected $db;
+    private $db;
 
     public function __construct(){
         $this->db = new Dbh();
@@ -26,24 +26,18 @@ class UserAuth extends Dbh{
 
     public function login($email, $password){
         $conn = $this->db->connect();
-        $sql = "SELECT * FROM students WHERE email='{$email}' AND `password`='{$password}'";
+        $sql = "SELECT `password` FROM students WHERE email='{$email}'";
         $result = $conn->query($sql);
         if($result->num_rows > 0){
-            $_SESSION['email'] = $email;
-            header("Location: dashboard.php");
+            $data = $result->fetch_array();
+            if($data[0] == $password) {
+                $_SESSION['email'] = $email;
+                $this->showError("dashboard.php", "Login successful");
+            } else {
+                $this->showError("forms/login.php", "Incorrect password");
+            }
         } else {
-            header("Location: forms/login.php");
-        }
-    }
-
-    public function getUser($username){
-        $conn = $this->db->connect();
-        $sql = "SELECT * FROM students WHERE email = '{$username}'";
-        $result = $conn->query($sql);
-        if($result->num_rows > 0){
-            return $result->fetch_assoc();
-        } else {
-            return false;
+            $this->showError("forms/login.php", "Email does not exist");
         }
     }
 
@@ -97,9 +91,9 @@ class UserAuth extends Dbh{
         $conn = $this->db->connect();
         $sql = "DELETE FROM students WHERE id = '{$id}'";
         if($conn->query($sql) === TRUE){
-            header("refresh:0.5; url=action.php?all");
+            $this->showError("action.php?all", "User with id: {$id} deleted successfully");
         } else {
-            header("refresh:0.5; url=action.php?all=&message=Error");
+            $this->showError("action.php?all", "ID ({$id}) does not exist");
         }
     }
 
@@ -108,21 +102,12 @@ class UserAuth extends Dbh{
         if($this->checkEmailExist($email)) {
             $sql = "UPDATE students SET password = '{$password}' WHERE email = '{$email}'";
             if($conn->query($sql) === TRUE){
-                header("Location: index.php?update=success");
+                $this->showError("index.php", "Password reset successful");
+            } else {
+                $this->showError("index.php", "Password reset failed");
             }
         } else {
-            header("Location: forms/resetpassword.php?error=1");
-        }
-    }
-
-    public function getUserByUsername($email){
-        $conn = $this->db->connect();
-        $sql = "SELECT * FROM students WHERE email = '{$email}'";
-        $result = $conn->query($sql);
-        if($result->num_rows > 0){
-            return $result->fetch_assoc();
-        } else {
-            return false;
+            $this->showError("forms/resetpassword.php", "Email does not exist");
         }
     }
 
