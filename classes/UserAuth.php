@@ -2,14 +2,14 @@
 include_once 'Dbh.php';
 
 class UserAuth extends Dbh{
-    private $db;
+    private static $db;
 
     public function __construct(){
-        $this->db = new Dbh();
+        UserAuth::$db = new Dbh();
     }
 
     public function register($fullname, $email, $password, $confirmPassword, $country, $gender){
-        $conn = $this->db->connect();
+        $conn = UserAuth::$db->connect();
         if($this->checkEmailExist($email)) {
             echo "Opps! Email already exists.";
         } else {
@@ -25,7 +25,7 @@ class UserAuth extends Dbh{
     }
 
     public function login($email, $password){
-        $conn = $this->db->connect();
+        $conn = UserAuth::$db->connect();
         $sql = "SELECT `password` FROM students WHERE email='{$email}'";
         $result = $conn->query($sql);
         if($result->num_rows > 0){
@@ -42,7 +42,7 @@ class UserAuth extends Dbh{
     }
 
     public function checkEmailExist($email) {
-        $conn = $this->db->connect();
+        $conn = UserAuth::$db->connect();
         $sql = "SELECT id FROM students WHERE email = '{$email}'";
         $result = $conn->query($sql);
         if($result->num_rows > 0){
@@ -53,7 +53,7 @@ class UserAuth extends Dbh{
     }
 
     public function getAllusers(){
-        $conn = $this->db->connect();
+        $conn = UserAuth::$db->connect();
         $sql = "SELECT * FROM students";
         $result = $conn->query($sql);
         echo"<html>
@@ -88,7 +88,7 @@ class UserAuth extends Dbh{
     }
 
     public function deleteUser(int $id){
-        $conn = $this->db->connect();
+        $conn = UserAuth::$db->connect();
         $sql = "DELETE FROM students WHERE id = '{$id}'";
         if($conn->query($sql) === TRUE){
             $this->showError("action.php?all", "User with id: {$id} deleted successfully");
@@ -98,7 +98,7 @@ class UserAuth extends Dbh{
     }
 
     public function updateUser($email, $password){
-        $conn = $this->db->connect();
+        $conn = UserAuth::$db->connect();
         if($this->checkEmailExist($email)) {
             $sql = "UPDATE students SET password = '{$password}' WHERE email = '{$email}'";
             if($conn->query($sql) === TRUE){
