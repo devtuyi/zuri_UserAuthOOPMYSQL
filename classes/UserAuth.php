@@ -1,7 +1,7 @@
 <?php
 include_once 'Dbh.php';
 
-class UserAuth extends Dbh{
+class UserAuth extends Dbh {
     private static $db;
 
     public function __construct(){
@@ -11,14 +11,15 @@ class UserAuth extends Dbh{
     public function register($fullname, $email, $password, $confirmPassword, $country, $gender){
         $conn = UserAuth::$db->connect();
         if($this->checkEmailExist($email)) {
-            echo "Opps! Email already exists.";
+            Dbh::showError("forms/register.php", "Opps! Email already exists");
         } else {
             if($this->confirmPasswordMatch($password, $confirmPassword)){
                 $sql = "INSERT INTO students (`full_names`, `email`, `password`, `country`, `gender`) VALUES ('{$fullname}','{$email}', '{$password}', '{$country}', '{$gender}')";
                 if($conn->query($sql)){
-                echo "Ok";
+                    $_SESSION['email'] = $email;
+                    Dbh::showError("dashboard.php", "Registration successful");
                 } else {
-                    echo "Opps". $conn->error;
+                    Dbh::showError("forms/register.php", "Registration failed");
                 }
             }
         }
@@ -32,12 +33,12 @@ class UserAuth extends Dbh{
             $data = $result->fetch_array();
             if($data[0] == $password) {
                 $_SESSION['email'] = $email;
-                $this->showError("dashboard.php", "Login successful");
+                Dbh::showError("dashboard.php", "Login successful");
             } else {
-                $this->showError("forms/login.php", "Incorrect password");
+                Dbh::showError("forms/login.php", "Incorrect password");
             }
         } else {
-            $this->showError("forms/login.php", "Email does not exist");
+            Dbh::showError("forms/login.php", "Email does not exist");
         }
     }
 
@@ -91,9 +92,9 @@ class UserAuth extends Dbh{
         $conn = UserAuth::$db->connect();
         $sql = "DELETE FROM students WHERE id = '{$id}'";
         if($conn->query($sql) === TRUE){
-            $this->showError("action.php?all", "User with id: {$id} deleted successfully");
+            Dbh::showError("action.php?all", "User with id: {$id} deleted successfully");
         } else {
-            $this->showError("action.php?all", "ID ({$id}) does not exist");
+            Dbh::showError("action.php?all", "ID ({$id}) does not exist");
         }
     }
 
@@ -102,12 +103,12 @@ class UserAuth extends Dbh{
         if($this->checkEmailExist($email)) {
             $sql = "UPDATE students SET password = '{$password}' WHERE email = '{$email}'";
             if($conn->query($sql) === TRUE){
-                $this->showError("index.php", "Password reset successful");
+                Dbh::showError("forms/login.php", "Password reset successful");
             } else {
-                $this->showError("index.php", "Password reset failed");
+                Dbh::showError("forms/resetpassword.php", "Password reset failed");
             }
         } else {
-            $this->showError("forms/resetpassword.php", "Email does not exist");
+            Dbh::showError("forms/resetpassword.php", "Email does not exist");
         }
     }
 

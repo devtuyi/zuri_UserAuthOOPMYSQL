@@ -1,28 +1,21 @@
 <?php
 session_start();
 class Dbh {
-    private string $_hostname;
-    private string $_username;
-    private string $_password;
-    private string $_database;
+    private string $_hostname = "localhost";
+    private string $_username = "root";
+    private string $_password = "";
+    private string $_database = "zuriphp";
 
-    public function __construct() {
-        $this->_hostname = "localhost";
-        $this->_username = "root";
-        $this->_password = "";
-        $this->_database = "zuriphp";
-    }
     protected function connect() {
         $cnx = new mysqli($this->_hostname, $this->_username, $this->_password, $this->_database);
         if($cnx->connect_errno) {
-            // Throw error
-            return false;
-        } else {
-            return $cnx;
+            Dbh::showError("index.php", "Error connecting to database");
         }
+        return $cnx;
     }
-    protected function showError($url, $message = "") {
-        echo $message;
+
+    public static function showError($url, $message = "") {
+        echo $message . " Click <a href=\"$url\"><strong>here</strong></a> if you are not redirected automatically";
         header("refresh:1; url=$url");
     }
 }
