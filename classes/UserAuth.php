@@ -21,6 +21,8 @@ class UserAuth extends Dbh {
                 } else {
                     Dbh::showError("forms/register.php", "Registration failed");
                 }
+            } else {
+                Dbh::showError("forms/register.php", "Passwords does not match"); 
             }
         }
     }
