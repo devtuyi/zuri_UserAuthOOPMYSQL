@@ -48,6 +48,7 @@ class formController extends UserAuth {
                 $this->updateUser($this->email, $this->password);
                 break;
             case isset($_POST['all']):
+            case isset($_GET['all']):
                 //unpack all data for getting all users
                 $this->getAllUsers();
                 break;
