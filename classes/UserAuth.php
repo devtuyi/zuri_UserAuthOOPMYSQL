@@ -14,6 +14,7 @@ class UserAuth extends Dbh {
             Dbh::showError("forms/register.php", "Opps! Email already exists");
         } else {
             if($this->confirmPasswordMatch($password, $confirmPassword)){
+                $password = md5($password);
                 $sql = "INSERT INTO students (`full_names`, `email`, `password`, `country`, `gender`) VALUES ('{$fullname}','{$email}', '{$password}', '{$country}', '{$gender}')";
                 if($conn->query($sql)){
                     $_SESSION['email'] = $email;
@@ -33,7 +34,7 @@ class UserAuth extends Dbh {
         $result = $conn->query($sql);
         if($result->num_rows > 0){
             $data = $result->fetch_array();
-            if($data[0] == $password) {
+            if($data[0] == md5($password)) {
                 $_SESSION['email'] = $email;
                 Dbh::showError("dashboard.php", "Login successful");
             } else {
